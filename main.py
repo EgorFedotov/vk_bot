@@ -1,6 +1,7 @@
 import os
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
+from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -24,5 +25,25 @@ for event in VkLongPoll(session).listen():
         text = event.text.lower()
         user_id = event.user_id
 
-        if text == "hello":
-            send_message(user_id, "Hello!")
+        if text == "start":
+            keyboard = VkKeyboard()
+            keyboard.add_location_button()
+            keyboard.add_line()
+
+            buttons = ["blue", "red", "white", "green"]
+            button_colors = [VkKeyboardColor.PRIMARY,
+                             VkKeyboardColor.NEGATIVE,
+                             VkKeyboardColor.SECONDARY,
+                             VkKeyboardColor.POSITIVE]
+
+            for btn, btn_color in zip(buttons, button_colors):
+                keyboard.add_button(btn, btn_color)
+
+            send_message(
+                user_id,
+                "My Keyboard",
+                keyboard=keyboard.get_keyboard()
+            )
+
+        elif text == "blue":
+            send_message(user_id, "BLUE")
