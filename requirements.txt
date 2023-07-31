@@ -1,3 +1,12 @@
-vk_api==11.9.9
-vktools==1.0.6
+certifi==2023.7.22
+charset-normalizer==3.2.0
+flake8==6.0.0
+idna==3.4
+mccabe==0.7.0
+pycodestyle==2.10.0
+pyflakes==3.0.1
 python-dotenv==1.0.0
+requests==2.31.0
+urllib3==2.0.4
+vk-api==11.9.9
+vktools==1.0.6

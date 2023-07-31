@@ -1,7 +1,12 @@
 import os
 import vk_api
+
 from vk_api.longpoll import VkLongPoll, VkEventType
-from vk_api.keyboard import VkKeyboard, VkKeyboardColor
+from vktools import (Keyboard,
+                     ButtonColor,
+                     Text, OpenLink,
+                     Location, Carousel,
+                     Element)
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -26,24 +31,42 @@ for event in VkLongPoll(session).listen():
         user_id = event.user_id
 
         if text == "start":
-            keyboard = VkKeyboard()
-            keyboard.add_location_button()
-            keyboard.add_line()
-
-            buttons = ["blue", "red", "white", "green"]
-            button_colors = [VkKeyboardColor.PRIMARY,
-                             VkKeyboardColor.NEGATIVE,
-                             VkKeyboardColor.SECONDARY,
-                             VkKeyboardColor.POSITIVE]
-
-            for btn, btn_color in zip(buttons, button_colors):
-                keyboard.add_button(btn, btn_color)
-
-            send_message(
-                user_id,
-                "My Keyboard",
-                keyboard=keyboard.get_keyboard()
+            keyboard = Keyboard(
+                [
+                    [
+                        Text("RED", ButtonColor.NEGATIVE),
+                        Text("GREEN", ButtonColor.POSITIVE),
+                        Text("BLUE", ButtonColor.PRIMARY),
+                        Text("WHITE")
+                    ],
+                    [
+                        OpenLink("YouTube", "https://youtube.com/c/Фсоки"),
+                        Location()
+                    ]
+                ]
             )
 
-        elif text == "blue":
-            send_message(user_id, "BLUE")
+            send_message(user_id,
+                         "New Keyboard",
+                         keyboard=keyboard.add_keyboard())
+        elif text == "test":
+            carousel = Carousel(
+                [
+                    Element(
+                        "Title 1",
+                        "Description 1",
+                        "-203980592_457239030",
+                        "https://vk.com/fsoky",
+                        [Text("Button 1", ButtonColor.NEGATIVE)]
+                    ),
+                    Element(
+                        "Title 2",
+                        "Description 2",
+                        "-203980592_457239030",
+                        "https://vk.com/fsoky",
+                        [Text("Button 2", ButtonColor.PRIMARY)]
+                    )     
+                ]
+            )
+
+            send_message(user_id, "Carousel", template=carousel.add_carousel())
