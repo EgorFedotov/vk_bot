@@ -1,30 +1,28 @@
 import os
 import vk_api
+from vk_api.longpoll import VkLongPoll, VkEventType
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
 session = vk_api.VkApi(token=os.getenv("TOKEN"))
-vk = session.get_api()
+api = session.get_api()
 
 
-def get_user_status(user_id):
-    friends = session.method("friends.get", {"user_id": user_id})
-
-    for friend in friends["items"]:
-        user = session.method("users.get", {"user_ids": friend})
-        status = session.method("status.get", {"user_id": friend})
-
-        if status["text"] == "":
-            continue
-        else:
-            print(f"{user[0]['first_name']} {user[0]['last_name']} | {status['text']}")
+def send_message(user_id, message, **kwargs):
+    api.messages.send(
+        user_id=user_id,
+        message=message,
+        random_id=0,
+        **kwargs
+    )
 
 
-def set_user_status():
-    vk.status.set(text="New text for my status")
+for event in VkLongPoll(session).listen():
+    if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+        text = event.text.lower()
+        user_id = event.user_id
 
-
-get_user_status(1)
-set_user_status()
+        if text == "hello":
+            send_message(user_id, "Hello!")
